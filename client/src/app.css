@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.todo-list::-webkit-scrollbar {
+    display: none;
+  }
