@@ -10,17 +10,13 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       title: {
-        unique:true,
-        type: Sequelize.STRING
-      },
-      tag: {
         type: Sequelize.STRING
       },
       desc: {
         type: Sequelize.STRING
       },
       userid: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,

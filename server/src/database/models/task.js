@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Task.init({
     title: DataTypes.STRING,
-    tag: DataTypes.STRING,
     desc: DataTypes.STRING,
     userid: DataTypes.INTEGER
   }, {

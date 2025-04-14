@@ -2,16 +2,20 @@ const { Task } = require("../../database/models/index.js");
 
 const addTask = async (req, res) => {
 
-  const titleExist = await Task.findOne({ where: { title: req.body.title } });
-  if (titleExist) {
-    return res.status(400).json({ message: "Title already exist" });
-  }
-
+  
   try {
-    const { title, tag, desc, id } = req.body;
+    const { title, desc, id } = req.body;
+    const titleExist = await Task.findOne({ where: { title: req.body.title ,userid:id} });
+
+    if (titleExist) {
+      return res.status(400).json({ message: "Title already exist" });
+    }
+    if(!id){
+      return res.status(400).json({ message: "Add authorization token first....", error: error });
+    }
+    
     const task = await Task.create({
       title,
-      tag,
       desc,
       userid: id,
     });
@@ -19,16 +23,14 @@ const addTask = async (req, res) => {
     return res.status(200).json({ message: "Successfully added task", task });
 
   } catch (error) {
-    return res.status(400).json({ message: "Erro occured", error: error });
+    return res.status(400).json({ message: "Error occured", error: error });
   }
 };
 
 const updateTask = async (req, res) => {
   try {
     const data = req.body;
-    const access = await Task.findOne({
-      where: { title: data.title, userid: data.id },
-    });
+    const access = await Task.findOne({where: { userid: data.userId }});
 
     if (!data.title) {
       return res.status(400).json({ message: "Enter title" });
@@ -36,17 +38,16 @@ const updateTask = async (req, res) => {
     if (!access) {
       return res.status(403).json({ message: "Unauthorized access" });
     }
-
+    
     const updateFields = {};
-    if (data.tag) updateFields.tag = data.tag;
     if (data.desc) updateFields.desc = data.desc;
-
+    if (data.title) updateFields.title = data.title;
+    
     if (Object.keys(updateFields).length === 0) {
       return res.status(400).json({ message: "No fields to update." });
     }
 
-    await Task.update(updateFields, { where: { title: data.title } });
-    
+    await Task.update(updateFields, { where: { userid: data.userId,id:data.id } });
     return res.status(200).json({ message: "Successfully updated task", data });
 
   } catch (error) {
@@ -57,8 +58,11 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   try {
     const data = req.body;
+    console.log("data",data);
     
     const id = req.params.id;
+    console.log("id",id);
+    
     if (!id) {
       return res.status(400).json({ message: "Task ID is required" });
     }
@@ -81,4 +85,22 @@ const deleteTask = async (req, res) => {
   }
 };
 
-module.exports = { addTask, updateTask, deleteTask };
+const allTask = async (req, res) => {
+  try {
+    const userid = req.body.id
+    if (!userid) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    
+    const tasks = await Task.findAll({ where: { userid: userid } });
+    if (tasks.length === 0) {
+      return res.status(201).json({ message: "No tasks found for this user" });
+    }
+
+    return res.status(200).json({ message: "Tasks retrieved successfully", tasks });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error occurred while retrieving tasks", error });
+  }
+};
+module.exports = { addTask, updateTask, deleteTask,allTask };

@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-
 const userAuth = async (req, res, next) => {
 
     const authHeader = req.headers.authorization; 
@@ -7,7 +6,7 @@ const userAuth = async (req, res, next) => {
         return res.json({ success: false, message: "Authorization header missing" });
     }
 
-    const token = authHeader.split(" ")[1]; // Extract the token after 'Bearer '
+    const token = authHeader.split(" ")[1]; 
     if (!token) {
         return res.json({ success: false, message: "Not authorized to update, Login first" });
     }
@@ -25,4 +24,4 @@ const userAuth = async (req, res, next) => {
     }
 };
 
-module.exports = { userAuth };
+module.exports = { userAuth};

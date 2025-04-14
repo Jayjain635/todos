@@ -9,12 +9,10 @@ exports.register = async (data)=>{
 
     //phone
     if(!data.phone) return ({message:"phone required",success:false});
-    if (!/[0-9]/.test(data.phone)) {
-        return { message: "Password must contain at least one number", success: false };
-    }
-    if (data.phone.length < 10) {
+    if (!/[0-9]/.test(data.phone) || data.phone.length < 10) {
         return { message: "Enter valid Phone number", success: false };
     }
+
 
     //password    
     if(!data.password) return ({message:"password required",success:false});
@@ -38,6 +36,7 @@ exports.register = async (data)=>{
 exports.login = async (data) => {
     //email      
     if(!data.email) return ({message:"email required",success:false});
+    if (!validator.validate(data.email)) {return { message: "Invalid email format", success: false };}
 
     //password     
     if(!data.password) return ({message:"password required",success:false});
